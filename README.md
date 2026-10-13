@@ -15,8 +15,6 @@ The fully qualified cask name adds the [Lantern24 tap](https://github.com/lanter
 
 ### First launch on macOS
 
-Current releases are ad-hoc signed, not Developer ID signed or notarized by Apple. A valid signature protects bundle integrity but does not make Gatekeeper trust the app; Homebrew installation does not remove this distinction.
-
 1. Open **Peer** from Applications or Spotlight.
 2. If macOS blocks the launch because the developer cannot be verified, and you trust the download, open **System Settings → Privacy & Security** and scroll to **Security**.
 3. Choose **Open Anyway** for Peer, if available, and confirm **Open** in the next dialog.
@@ -31,8 +29,6 @@ brew upgrade --cask lantern24/tap/peer
 ```
 
 Quit Peer before upgrading, then reopen it afterward.
-
-If you installed v0.1.0 and macOS reports the app as damaged, upgrade to v0.1.1 or later: v0.1.0 had an invalid bundle signature. The integrity fix does not add notarization. If a newer version still reports damage, [report the problem](https://github.com/lantern24/peer/issues) rather than treating it as an ordinary unidentified-developer warning.
 
 ### Uninstall
 
