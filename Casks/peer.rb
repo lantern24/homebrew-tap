@@ -1,6 +1,6 @@
 cask "peer" do
-  version "0.1.2"
-  sha256 "95970c9c4395d1318db716481520d548af65bce58b75f8d803410610a8bfa7c5"
+  version "0.1.3"
+  sha256 "d780ca64953862ba30a95672e6bc83c1871d0609753bb9b5c8f7d396e4c5064c"
 
   url "https://github.com/lantern24/peer/releases/download/v#{version}/Peer-macOS-arm64.app.zip"
   name "Peer"
