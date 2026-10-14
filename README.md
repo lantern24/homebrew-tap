@@ -2,6 +2,8 @@
 
 Homebrew casks for Lantern24 apps, including [Peer](https://github.com/lantern24/peer), a local repository viewer and code review workspace.
 
+Current release: [Peer v0.1.2](https://github.com/lantern24/peer/releases/tag/v0.1.2).
+
 ## Install with Homebrew
 
 Requirements: [Homebrew](https://brew.sh/), an Apple Silicon Mac (arm64), and macOS 13 or later. Intel Macs are not supported by the current release bundle. Node.js and Rust are only needed for development, not installation.
