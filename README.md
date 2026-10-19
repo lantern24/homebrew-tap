@@ -2,7 +2,7 @@
 
 Homebrew casks for Lantern24 apps, including [Peer](https://github.com/lantern24/peer), a local repository viewer and code review workspace.
 
-Current release: [Peer v0.1.3](https://github.com/lantern24/peer/releases/tag/v0.1.3).
+Current release: [Peer v0.2.0](https://github.com/lantern24/peer/releases/tag/v0.2.0).
 
 ## Install with Homebrew
 
