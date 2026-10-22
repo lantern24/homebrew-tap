@@ -1,10 +1,10 @@
 # Lantern24 Homebrew Tap
 
-Homebrew casks for Lantern24 apps, including [Peer](https://github.com/lantern24/peer), a local repository viewer and code review workspace.
+Homebrew packages for Lantern24 apps, including [Peer](https://github.com/lantern24/peer), a local repository viewer and code review workspace.
 
 Current release: [Peer v0.2.0](https://github.com/lantern24/peer/releases/tag/v0.2.0).
 
-## Install with Homebrew
+## Install on macOS
 
 Requirements: [Homebrew](https://brew.sh/), an Apple Silicon Mac (arm64), and macOS 13 or later. Intel Macs are not supported by the current release bundle. Node.js and Rust are only needed for development, not installation.
 
@@ -40,21 +40,70 @@ brew uninstall --cask lantern24/tap/peer
 
 This removes the app bundle; saved review data and preferences are retained.
 
+## Install on Linux
+
+Linux installation becomes available after upstream publishes
+`Peer-Linux-x86_64.AppImage` and `Peer-Linux-arm64.AppImage` alongside the macOS ZIP
+in a stable release and the release-update PR adds `Formula/peer.rb` to this tap.
+Until that formula is present, the Linux install command below is not available.
+The updater never creates a formula with an unverified checksum or an unpublished
+download URL.
+
+Requirements: [Homebrew on Linux](https://docs.brew.sh/Homebrew-on-Linux), an
+x86_64 (amd64) or arm64 (aarch64) Linux system, and a graphical desktop session.
+Use a distribution compatible with the selected architecture's upstream AppImage
+build baseline; see the [Peer release notes](https://github.com/lantern24/peer/releases)
+for system requirements.
+
+Once the formula is available:
+
+```sh
+brew update
+brew install --formula lantern24/tap/peer
+peer
+```
+
+The fully qualified formula name adds the tap automatically. Homebrew selects
+the AppImage and SHA-256 checksum for your CPU architecture, verifies the
+download, extracts it into the formula's private installation directory,
+installs Git, and provides the `peer` launcher. Extraction avoids requiring
+FUSE at launch. Node.js and Rust are not required.
+Peer is a desktop application, not a headless command-line viewer.
+
+### Upgrade or uninstall on Linux
+
+Quit Peer before upgrading, then reopen it afterward:
+
+```sh
+brew update
+brew upgrade --formula lantern24/tap/peer
+```
+
+```sh
+brew uninstall --formula lantern24/tap/peer
+```
+
+Uninstalling removes the application; saved review data and preferences are retained.
+
 ## Release updates
 
-The **Update Peer cask** GitHub Actions workflow checks the latest stable
+The **Update Peer packages** GitHub Actions workflow checks the latest stable
 `lantern24/peer` release at 00:17, 06:17, 12:17, and 18:17 UTC. It uses `gh api`
 for release discovery and `gh release download` to fetch
-`Peer-macOS-arm64.app.zip` into temporary storage. Python verifies its size and
-any published SHA-256 digest, computes the checksum independently, and removes
-the download afterward. Same-version asset replacements are checked too;
-older versions are rejected.
+`Peer-macOS-arm64.app.zip`, `Peer-Linux-x86_64.AppImage`, and
+`Peer-Linux-arm64.AppImage` into temporary storage. Python verifies each asset's
+size and any published SHA-256 digest, computes all three checksums independently,
+and removes the downloads afterward. Same-version asset replacements are checked
+too; downgrades of either package are rejected.
 
-Ready releases update the cask and the current-release link above through one
-human-reviewed PR on `automation/update-peer`. The workflow never auto-merges.
-Missing releases or unfinished uploads leave the tap and any existing update PR
-unchanged until the next scheduled or manual check. Invalid metadata or failed
-downloads fail the run visibly.
+Ready releases update the cask, Linux formula, and current-release link above
+through one human-reviewed PR on `automation/update-peer`. The first ready
+release creates `Formula/peer.rb`; later updates preserve its installation
+logic. The workflow never auto-merges.
+Missing releases or unfinished uploads for any architecture leave the tap and
+any existing update PR unchanged until the next scheduled or manual check;
+neither package advances until all three assets are ready. Invalid metadata or
+failed downloads fail the run visibly, before any package files are changed.
 
 The workflow must be merged into the default branch before it can be scheduled
 or manually dispatched:
@@ -65,7 +114,7 @@ gh workflow run update-peer.yml --repo lantern24/homebrew-tap --ref main
 
 It uses the built-in `GITHUB_TOKEN`. If GitHub refuses PR creation, enable
 **Settings → Actions → General → Workflow permissions → Allow GitHub Actions to
-create and approve pull requests**. Tests and the Ruby syntax check run before
+create and approve pull requests**. Tests and Ruby syntax checks run before
 PR creation because token-created PRs do not trigger ordinary PR workflows.
 
 [GitHub schedules are best-effort](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#schedule)
@@ -79,6 +128,7 @@ To verify or synchronize locally (Python 3, Ruby, and [GitHub CLI](https://cli.g
 python3 -B -m unittest discover -s tests -p 'test_*.py' -v
 python3 .github/scripts/update_peer.py
 ruby -c Casks/peer.rb
+if [ -f Formula/peer.rb ]; then ruby -c Formula/peer.rb; fi
 ```
 
 The tests are offline and do not require `gh` or credentials. The updater requires

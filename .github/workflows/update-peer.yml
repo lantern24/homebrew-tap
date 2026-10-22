@@ -1,4 +1,4 @@
-name: Update Peer cask
+name: Update Peer packages
 
 on:
   schedule:
@@ -31,8 +31,12 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: python3 .github/scripts/update_peer.py
 
-      - name: Check cask syntax
-        run: ruby -c Casks/peer.rb
+      - name: Check package syntax
+        run: |
+          ruby -c Casks/peer.rb
+          if [ -f Formula/peer.rb ]; then
+            ruby -c Formula/peer.rb
+          fi
 
       - name: Create or update the release PR
         if: steps.update.outputs.status == 'updated' || steps.update.outputs.status == 'current'
@@ -44,15 +48,21 @@ jobs:
           delete-branch: true
           add-paths: |
             Casks/peer.rb
+            Formula/peer.rb
             README.md
           title: 'chore(peer): update to v${{ steps.update.outputs.version }}'
           commit-message: 'chore(peer): update to v${{ steps.update.outputs.version }}'
           body: |
             Synchronize the tap with [Peer v${{ steps.update.outputs.version }}](${{ steps.update.outputs.release_url }}).
 
-            - Asset: `Peer-macOS-arm64.app.zip`
-            - SHA-256: `${{ steps.update.outputs.sha256 }}`
+            - macOS asset: `Peer-macOS-arm64.app.zip`
+            - macOS SHA-256: `${{ steps.update.outputs.macos_sha256 }}`
+            - Linux x86_64 asset: `Peer-Linux-x86_64.AppImage`
+            - Linux x86_64 SHA-256: `${{ steps.update.outputs.linux_x86_64_sha256 }}`
+            - Linux arm64 asset: `Peer-Linux-arm64.AppImage`
+            - Linux arm64 SHA-256: `${{ steps.update.outputs.linux_arm64_sha256 }}`
 
-            The release asset was downloaded and hashed, its size and any published
-            SHA-256 digest were verified, and the cask plus README were synchronized.
-            Release-boundary tests and the cask syntax check passed before this PR.
+            All three release assets were downloaded and hashed, their sizes and any
+            published SHA-256 digests were verified, and the cask, Linux formula,
+            and README were synchronized.
+            Release-boundary tests and package syntax checks passed before this PR.
