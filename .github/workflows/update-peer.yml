@@ -1,0 +1,58 @@
+name: Update Peer cask
+
+on:
+  schedule:
+    - cron: '17 */6 * * *'
+  workflow_dispatch:
+
+concurrency:
+  group: update-peer
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Check out the default branch
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+
+      - name: Test release synchronization
+        run: python3 -B -m unittest discover -s tests -p 'test_*.py' -v
+
+      - name: Synchronize the latest stable release
+        id: update
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 .github/scripts/update_peer.py
+
+      - name: Check cask syntax
+        run: ruby -c Casks/peer.rb
+
+      - name: Create or update the release PR
+        if: steps.update.outputs.status == 'updated' || steps.update.outputs.status == 'current'
+        uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
+        with:
+          token: ${{ github.token }}
+          base: ${{ github.event.repository.default_branch }}
+          branch: automation/update-peer
+          delete-branch: true
+          add-paths: |
+            Casks/peer.rb
+            README.md
+          title: 'chore(peer): update to v${{ steps.update.outputs.version }}'
+          commit-message: 'chore(peer): update to v${{ steps.update.outputs.version }}'
+          body: |
+            Synchronize the tap with [Peer v${{ steps.update.outputs.version }}](${{ steps.update.outputs.release_url }}).
+
+            - Asset: `Peer-macOS-arm64.app.zip`
+            - SHA-256: `${{ steps.update.outputs.sha256 }}`
+
+            The release asset was downloaded and hashed, its size and any published
+            SHA-256 digest were verified, and the cask plus README were synchronized.
+            Release-boundary tests and the cask syntax check passed before this PR.
