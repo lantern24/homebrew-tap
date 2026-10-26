@@ -1,17 +1,17 @@
 class Peer < Formula
   desc "Local repository viewer and code review workspace"
   homepage "https://github.com/lantern24/peer"
-  version "0.3.0"
+  version "0.3.1"
   license "Apache-2.0"
 
   on_intel do
     url "https://github.com/lantern24/peer/releases/download/v#{version}/Peer-Linux-x86_64.AppImage"
-    sha256 "2c368d7cfda624b476a54cc6b3a093e388e78b5718c92af1cf1ca8999fdab8d5"
+    sha256 "46f5c9cd1bc5d16d215f52bab09e8a8aeb94a6a3418ae18f4b41341228d7092f"
   end
 
   on_arm do
     url "https://github.com/lantern24/peer/releases/download/v#{version}/Peer-Linux-arm64.AppImage"
-    sha256 "38331aeebc281f9a9c45897c75b6a827131e068ce1d7bf895877eb9b8f32c625"
+    sha256 "0e8c4f0b827bee74805e5ff67bb927c618398e701b90b81fe1304ad8e886a2cf"
   end
 
   depends_on :linux
