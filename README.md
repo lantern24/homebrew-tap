@@ -2,7 +2,7 @@
 
 Homebrew packages for Lantern24 apps, including [Peer](https://github.com/lantern24/peer), a local repository viewer and code review workspace.
 
-Current release: [Peer v0.3.1](https://github.com/lantern24/peer/releases/tag/v0.3.1).
+Current release: [Peer v0.4.0](https://github.com/lantern24/peer/releases/tag/v0.4.0).
 
 ## Install on macOS
 
